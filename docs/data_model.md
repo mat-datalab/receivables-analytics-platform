@@ -6,7 +6,7 @@
     Primary key: customer_id
     Foreign keys: collector_id
     Purpose: To identify the customers
-    Example fields: company_name, country, segment, risk_tier, payment_terms, collector_id
+    Example fields: company_name, country, segment, risk_tier, payment_terms
     Relationships: To Invoices, Collectors
     Data quality checks:
         - customer_id cannot be null
@@ -44,7 +44,7 @@
     Primary key: payment_id
     Foreign keys: invoice_id
     Purpose: To check for payment info/status
-    Example fields: payment date, amount, original currency, amount in USD
+    Example fields: payment_date, payment_amount, original_currency, amount_in_base_currency
     Relationships: To Invoices
     Data quality checks:
         - payment_id cannot be null
@@ -61,7 +61,7 @@
     Entity: Disputes
     Grain: one row per dispute case
     Primary key: dispute_id
-    Foreign keys: invoice_id
+    Foreign keys: invoice_id, idirectly to Customers
     Purpose: To identify which invoices are disputed and what is the issue
     Example fields: invoice_id, reason_code, created_date, closed_date, status, disputed_amount
     Relationships: To Invoices, Customers
@@ -82,7 +82,7 @@
     Entity: Promises_to_pay
     Grain: one row per promise made by a customer for an invoice
     Primary key: promise_id
-    Foreign keys: invoice_id
+    Foreign keys: invoice_id, customer_id optional/denormilized
     Purpose: To identify if customers promised to pay invoice and when they will pay
     Example fields: created_date, promised_payment_date, promised_amount, status (open, kept, broken)
     Relationships: To Invoices, Customers
@@ -99,10 +99,10 @@
 ## COLLECTORS
     Entity: Collectors
     Grain: one row per collector
-    Primary key: Collector_id
+    Primary key: collector_id
     Foreign keys: -
     Purpose: To verify which collector is responsible for which customer
-    Example fields: iD, name, surname, e-mail, phone number, is_active, team
+    Example fields: collector_id, name, surname, email, phone_number, is_active, team
     Relationships: To Customers
     Data quality checks:
         - collector_id cannot be null
@@ -120,7 +120,7 @@
     Primary key: base_currency + target_currency + rate_date
     Foreign keys: -
     Purpose: To use it to convert rates for payments
-    Example fields: target_currency, rate_date, exchange_rate
+    Example fields: base_currency, target_currency, rate_date, exchange_rate
     Relationships: To Payments, Invoices
     Data quality checks:
         - base_currency cannot be null
